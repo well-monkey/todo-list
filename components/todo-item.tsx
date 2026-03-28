@@ -1,12 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { Checkbox, Tag, Button } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
 import { Todo, Priority } from "@/lib/types";
-import { cn } from "@/lib/utils";
 
 interface TodoItemProps {
   todo: Todo;
@@ -14,47 +11,42 @@ interface TodoItemProps {
   onDelete: (id: string) => void;
 }
 
-const priorityColors: Record<Priority, string> = {
-  low: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
-  medium: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300",
-  high: "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300",
+const priorityColor: Record<Priority, string> = {
+  low: "blue",
+  medium: "gold",
+  high: "red",
 };
 
 export function TodoItem({ todo, onToggle, onDelete }: TodoItemProps) {
   const t = useTranslations("priority");
 
   return (
-    <li className="group flex items-center gap-3 rounded-lg border bg-card px-4 py-3 shadow-xs transition-colors hover:bg-accent/30">
+    <li className="flex items-center gap-3 px-4 py-3 rounded-lg border border-solid group transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+        style={{ borderColor: "var(--ant-color-border, #d9d9d9)" }}>
       <Checkbox
         id={`todo-${todo.id}`}
         checked={todo.completed}
-        onCheckedChange={() => onToggle(todo.id)}
+        onChange={() => onToggle(todo.id)}
         className="shrink-0"
       />
       <label
         htmlFor={`todo-${todo.id}`}
-        className={cn(
-          "flex-1 cursor-pointer text-sm leading-relaxed",
-          todo.completed && "line-through text-muted-foreground"
-        )}
+        className={`flex-1 cursor-pointer text-sm leading-relaxed ${todo.completed ? "line-through opacity-40" : ""}`}
       >
         {todo.text}
       </label>
-      <Badge
-        variant="secondary"
-        className={cn("shrink-0 text-xs capitalize", priorityColors[todo.priority])}
-      >
+      <Tag color={priorityColor[todo.priority]} className="shrink-0 capitalize">
         {t(todo.priority)}
-      </Badge>
+      </Tag>
       <Button
-        variant="ghost"
-        size="icon"
+        type="text"
+        danger
+        size="small"
+        icon={<DeleteOutlined />}
         onClick={() => onDelete(todo.id)}
-        className="h-7 w-7 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive hover:bg-destructive/10"
+        className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
         aria-label="Delete"
-      >
-        <Trash2 className="h-3.5 w-3.5" />
-      </Button>
+      />
     </li>
   );
 }

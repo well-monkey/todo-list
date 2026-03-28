@@ -4,6 +4,8 @@ import { getMessages } from "next-intl/server";
 import { ThemeProvider } from "next-themes";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
+import { AntdRegistry } from "@/components/antd-registry";
+import { AntdThemeProvider } from "@/components/antd-theme-provider";
 import "../globals.css";
 
 export const metadata: Metadata = {
@@ -28,16 +30,20 @@ export default async function LocaleLayout({ children, params }: Props) {
   return (
     <html lang={locale} suppressHydrationWarning>
       <body>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <NextIntlClientProvider messages={messages}>
-            {children}
-          </NextIntlClientProvider>
-        </ThemeProvider>
+        <AntdRegistry>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <AntdThemeProvider>
+              <NextIntlClientProvider messages={messages}>
+                {children}
+              </NextIntlClientProvider>
+            </AntdThemeProvider>
+          </ThemeProvider>
+        </AntdRegistry>
       </body>
     </html>
   );

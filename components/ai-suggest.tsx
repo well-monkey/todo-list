@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Sparkles, Plus, Loader2 } from "lucide-react";
+import { Card, Button, Tag, Typography, Space } from "antd";
+import { BulbOutlined, PlusOutlined, LoadingOutlined } from "@ant-design/icons";
 import { Todo, Priority } from "@/lib/types";
-import { cn } from "@/lib/utils";
+
+const { Text } = Typography;
 
 interface Suggestion {
   text: string;
@@ -19,10 +19,10 @@ interface AISuggestProps {
   onAdd: (text: string, priority: Priority) => void;
 }
 
-const priorityColors: Record<Priority, string> = {
-  low: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
-  medium: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300",
-  high: "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300",
+const priorityColor: Record<Priority, string> = {
+  low: "blue",
+  medium: "gold",
+  high: "red",
 };
 
 export function AISuggest({ todos, onAdd }: AISuggestProps) {
@@ -63,78 +63,72 @@ export function AISuggest({ todos, onAdd }: AISuggestProps) {
   };
 
   return (
-    <div className="rounded-xl border bg-gradient-to-br from-violet-50/50 to-indigo-50/50 dark:from-violet-950/20 dark:to-indigo-950/20 p-4 space-y-3">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-violet-500" />
-          <span className="text-sm font-medium text-violet-700 dark:text-violet-300">
-            {t("ai.title")}
-          </span>
+    <Card
+      size="small"
+      styles={{ body: { padding: "12px 16px" } }}
+    >
+      <div className="flex flex-col gap-3">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <Space size="small">
+            <BulbOutlined style={{ color: "#7c3aed" }} />
+            <Text strong style={{ color: "#7c3aed" }}>
+              {t("ai.title")}
+            </Text>
+          </Space>
+          <Button
+            size="small"
+            loading={loading}
+            icon={loading ? <LoadingOutlined /> : <BulbOutlined />}
+            onClick={fetchSuggestions}
+          >
+            {loading ? t("ai.thinking") : t("ai.suggest")}
+          </Button>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={fetchSuggestions}
-          disabled={loading}
-          className="h-7 text-xs border-violet-200 dark:border-violet-800 hover:bg-violet-50 dark:hover:bg-violet-900/30"
-        >
-          {loading ? (
-            <Loader2 className="h-3 w-3 animate-spin mr-1" />
-          ) : (
-            <Sparkles className="h-3 w-3 mr-1" />
-          )}
-          {loading ? t("ai.thinking") : t("ai.suggest")}
-        </Button>
+
+        {/* Error */}
+        {error && <Text type="danger" className="text-xs">{error}</Text>}
+
+        {/* Suggestions list */}
+        {suggestions.length > 0 && (
+          <div className="flex flex-col gap-2">
+            {suggestions.map((s, i) => (
+              <div
+                key={i}
+                className={`flex items-start gap-2 rounded-lg border border-solid p-3 transition-opacity ${added.has(s.text) ? "opacity-40" : ""}`}
+                style={{ borderColor: "var(--ant-color-border, #d9d9d9)" }}
+              >
+                <div className="flex-1 min-w-0">
+                  <Text className="text-sm font-medium leading-snug block">{s.text}</Text>
+                  <Text type="secondary" className="text-xs block mt-0.5 leading-relaxed">
+                    {s.reason}
+                  </Text>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0 mt-0.5">
+                  <Tag color={priorityColor[s.priority]}>
+                    {t(`priority.${s.priority}`)}
+                  </Tag>
+                  <Button
+                    type="text"
+                    size="small"
+                    icon={<PlusOutlined />}
+                    disabled={added.has(s.text)}
+                    onClick={() => handleAdd(s)}
+                    aria-label={t("ai.addSuggestion")}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Hint */}
+        {!loading && suggestions.length === 0 && !error && (
+          <Text type="secondary" className="text-xs text-center block py-1">
+            {t("ai.hint")}
+          </Text>
+        )}
       </div>
-
-      {error && (
-        <p className="text-xs text-destructive">{error}</p>
-      )}
-
-      {suggestions.length > 0 && (
-        <ul className="space-y-2">
-          {suggestions.map((s, i) => (
-            <li
-              key={i}
-              className={cn(
-                "flex items-start gap-2 rounded-lg border bg-background/80 px-3 py-2 text-sm transition-opacity",
-                added.has(s.text) && "opacity-40"
-              )}
-            >
-              <div className="flex-1 min-w-0">
-                <p className="font-medium leading-snug">{s.text}</p>
-                <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
-                  {s.reason}
-                </p>
-              </div>
-              <div className="flex items-center gap-1.5 shrink-0 mt-0.5">
-                <Badge
-                  variant="secondary"
-                  className={cn("text-xs", priorityColors[s.priority])}
-                >
-                  {t(`priority.${s.priority}`)}
-                </Badge>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-6 w-6"
-                  disabled={added.has(s.text)}
-                  onClick={() => handleAdd(s)}
-                  aria-label={t("ai.addSuggestion")}
-                >
-                  <Plus className="h-3.5 w-3.5" />
-                </Button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {!loading && suggestions.length === 0 && !error && (
-        <p className="text-xs text-muted-foreground text-center py-1">
-          {t("ai.hint")}
-        </p>
-      )}
-    </div>
+    </Card>
   );
 }
