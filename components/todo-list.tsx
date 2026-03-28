@@ -2,13 +2,14 @@
 
 import { useState, useCallback, useMemo, useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { Button } from "@/components/ui/button";
+import { Button, Segmented, Empty, Typography } from "antd";
+import { CheckSquareOutlined } from "@ant-design/icons";
 import { AddTodo } from "@/components/add-todo";
 import { TodoItem } from "@/components/todo-item";
 import { AISuggest } from "@/components/ai-suggest";
 import { Todo, FilterType, Priority } from "@/lib/types";
-import { CheckSquare } from "lucide-react";
-import { cn } from "@/lib/utils";
+
+const { Text } = Typography;
 
 const STORAGE_KEY = "todo-list-items";
 
@@ -22,7 +23,6 @@ export function TodoList() {
   const [filter, setFilter] = useState<FilterType>("all");
   const [mounted, setMounted] = useState(false);
 
-  // Load from localStorage on mount
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
@@ -33,7 +33,6 @@ export function TodoList() {
     setMounted(true);
   }, []);
 
-  // Persist to localStorage
   useEffect(() => {
     if (!mounted) return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
@@ -76,14 +75,18 @@ export function TodoList() {
   const activeCount = useMemo(() => todos.filter((t) => !t.completed).length, [todos]);
   const completedCount = useMemo(() => todos.filter((t) => t.completed).length, [todos]);
 
-  const filters: FilterType[] = ["all", "active", "completed"];
+  const filterOptions = [
+    { label: t("filter.all"), value: "all" },
+    { label: t("filter.active"), value: "active" },
+    { label: t("filter.completed"), value: "completed" },
+  ];
 
   if (!mounted) {
     return (
       <div className="flex flex-col gap-4 animate-pulse">
-        <div className="h-10 rounded-lg bg-muted" />
-        <div className="h-10 rounded-lg bg-muted" />
-        <div className="h-10 rounded-lg bg-muted" />
+        <div className="h-10 rounded-lg bg-gray-200 dark:bg-gray-700" />
+        <div className="h-10 rounded-lg bg-gray-200 dark:bg-gray-700" />
+        <div className="h-10 rounded-lg bg-gray-200 dark:bg-gray-700" />
       </div>
     );
   }
@@ -92,35 +95,17 @@ export function TodoList() {
     <div className="flex flex-col gap-4">
       <AddTodo onAdd={addTodo} />
 
-      {/* AI Suggestions */}
       <AISuggest todos={todos} onAdd={addTodo} />
 
-      {/* Filter tabs */}
+      {/* Filter bar */}
       <div className="flex items-center justify-between gap-2">
-        <div className="flex gap-1 rounded-lg border bg-muted p-1">
-          {filters.map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={cn(
-                "rounded-md px-3 py-1 text-xs font-medium transition-colors",
-                filter === f
-                  ? "bg-background text-foreground shadow-xs"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              {t(`filter.${f}`)}
-            </button>
-          ))}
-        </div>
-
+        <Segmented
+          options={filterOptions}
+          value={filter}
+          onChange={(v) => setFilter(v as FilterType)}
+        />
         {completedCount > 0 && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={clearCompleted}
-            className="text-xs text-muted-foreground h-7"
-          >
+          <Button type="link" size="small" onClick={clearCompleted}>
             {t("todo.clearCompleted")}
           </Button>
         )}
@@ -128,14 +113,19 @@ export function TodoList() {
 
       {/* Todo list */}
       {filteredTodos.length === 0 ? (
-        <div className="flex flex-col items-center justify-center gap-3 py-16 text-center text-muted-foreground">
-          <CheckSquare className="h-12 w-12 opacity-20" />
-          <p className="text-sm">
-            {todos.length === 0 ? t("todo.empty") : t("todo.emptyFiltered")}
-          </p>
+        <div className="py-10">
+          <Empty
+            image={<CheckSquareOutlined style={{ fontSize: 48, opacity: 0.2 }} />}
+            styles={{ image: { height: "auto" } }}
+            description={
+              <Text type="secondary">
+                {todos.length === 0 ? t("todo.empty") : t("todo.emptyFiltered")}
+              </Text>
+            }
+          />
         </div>
       ) : (
-        <ul className="flex flex-col gap-2">
+        <ul className="flex flex-col gap-2 p-0 list-none">
           {filteredTodos.map((todo) => (
             <TodoItem
               key={todo.id}
@@ -149,11 +139,11 @@ export function TodoList() {
 
       {/* Footer count */}
       {todos.length > 0 && (
-        <p className="text-center text-xs text-muted-foreground">
+        <Text type="secondary" className="text-center text-xs block">
           {activeCount === 1
             ? t("todo.itemsLeft", { count: activeCount })
             : t("todo.itemsLeftPlural", { count: activeCount })}
-        </p>
+        </Text>
       )}
     </div>
   );

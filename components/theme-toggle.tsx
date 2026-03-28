@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { useTranslations } from "next-intl";
-import { Button } from "@/components/ui/button";
-import { Moon, Sun, Monitor } from "lucide-react";
+import { Segmented, Tooltip } from "antd";
+import { SunOutlined, MoonOutlined, DesktopOutlined } from "@ant-design/icons";
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
@@ -13,30 +13,26 @@ export function ThemeToggle() {
 
   useEffect(() => setMounted(true), []);
 
-  // Avoid hydration mismatch — don't render active state until mounted
-  const activeTheme = mounted ? theme : undefined;
+  const activeTheme = mounted ? theme : "system";
 
-  const themes = [
-    { value: "light", icon: Sun, label: t("light") },
-    { value: "dark", icon: Moon, label: t("dark") },
-    { value: "system", icon: Monitor, label: t("system") },
+  const options = [
+    { value: "light", icon: <SunOutlined />, label: t("light") },
+    { value: "dark", icon: <MoonOutlined />, label: t("dark") },
+    { value: "system", icon: <DesktopOutlined />, label: t("system") },
   ];
 
   return (
-    <div className="flex items-center gap-1 rounded-lg border bg-muted p-1">
-      {themes.map(({ value, icon: Icon, label }) => (
-        <Button
-          key={value}
-          variant={activeTheme === value ? "default" : "ghost"}
-          size="sm"
-          onClick={() => setTheme(value)}
-          className="h-7 px-2 text-xs gap-1"
-          title={label}
-        >
-          <Icon className="h-3.5 w-3.5" />
-          <span className="hidden sm:inline">{label}</span>
-        </Button>
-      ))}
-    </div>
+    <Segmented
+      value={activeTheme}
+      onChange={(v) => setTheme(v as string)}
+      options={options.map(({ value, icon, label }) => ({
+        value,
+        label: (
+          <Tooltip title={label}>
+            {icon}
+          </Tooltip>
+        ),
+      }))}
+    />
   );
 }
