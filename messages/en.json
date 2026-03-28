@@ -1,0 +1,48 @@
+{
+  "app": {
+    "title": "Todo List",
+    "subtitle": "Stay organized, stay productive"
+  },
+  "input": {
+    "placeholder": "What needs to be done?",
+    "add": "Add"
+  },
+  "filter": {
+    "all": "All",
+    "active": "Active",
+    "completed": "Completed"
+  },
+  "todo": {
+    "empty": "No tasks yet. Add one above!",
+    "emptyFiltered": "No tasks match this filter.",
+    "itemsLeft": "{count} item left",
+    "itemsLeftPlural": "{count} items left",
+    "clearCompleted": "Clear completed",
+    "deleteConfirm": "Delete this task?"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "toggle": "Toggle theme"
+  },
+  "language": {
+    "en": "English",
+    "zh": "中文",
+    "switch": "Switch language"
+  },
+  "ai": {
+    "title": "AI Suggestions",
+    "suggest": "Suggest Tasks",
+    "thinking": "Thinking...",
+    "hint": "Click to get AI-powered task suggestions based on your list.",
+    "error": "Failed to get suggestions. Please try again.",
+    "addSuggestion": "Add this task"
+  },
+  "priority": {
+    "label": "Priority",
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High"
+  }
+}
