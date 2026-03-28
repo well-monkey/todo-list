@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
 import { ThemeProvider } from "next-themes";
@@ -44,6 +45,7 @@ export default async function LocaleLayout({ children, params }: Props) {
             </AntdThemeProvider>
           </ThemeProvider>
         </AntdRegistry>
+        <SpeedInsights />
       </body>
     </html>
   );

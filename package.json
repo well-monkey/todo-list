@@ -12,6 +12,7 @@
     "@ai-sdk/react": "^3.0.143",
     "@ant-design/cssinjs": "^2.1.2",
     "@ant-design/icons": "^6.1.1",
+    "@vercel/speed-insights": "^2.0.0",
     "ai": "^6.0.141",
     "antd": "^6.3.4",
     "clsx": "^2.1.1",
