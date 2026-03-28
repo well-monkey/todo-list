@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "Bash(curl -s https://ai-gateway.vercel.sh/v1/models)",
+      "Bash(python3 -c \"import sys,json; data=json.load\\(sys.stdin\\); models=[m[''''id''''] for m in data.get\\(''''data'''',[]\\) if m[''''id''''].startswith\\(''''anthropic/''''\\)]; print\\(''''\\\\n''''.join\\(reversed\\(models\\)\\)\\)\")",
+      "mcp__plugin_playwright_playwright__browser_wait_for",
+      "mcp__plugin_playwright_playwright__browser_navigate",
+      "mcp__plugin_playwright_playwright__browser_console_messages",
+      "mcp__plugin_playwright_playwright__browser_type",
+      "mcp__plugin_playwright_playwright__browser_run_code",
+      "mcp__plugin_playwright_playwright__browser_take_screenshot",
+      "mcp__plugin_playwright_playwright__browser_snapshot",
+      "mcp__plugin_playwright_playwright__browser_click",
+      "mcp__plugin_playwright_playwright__browser_evaluate"
+    ]
+  }
+}
