@@ -1,0 +1,51 @@
+[    1352ms] [ERROR] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <HTTPAccessFallbackBoundary notFound={undefined} forbidden={undefined} unauthorized={undefined}>
+      <RedirectBoundary>
+        <RedirectErrorBoundary router={{...}}>
+          <InnerLayoutRouter url="/en" tree={[...]} params={{locale:"en"}} cacheNode={{rsc:{...}, ...}} ...>
+            <SegmentViewNode type="page" pagePath="[locale]/p...">
+              <SegmentTrieNode>
+              <Home>
+                <div className="min-h-scre...">
+                  <div className="mx-auto ma...">
+                    <header className="mb-8 flex ...">
+                      <div>
+                      <div className="flex items...">
+                        <LanguageSwitcher>
+                        <ThemeToggle>
+                          <div className="flex items...">
+                            <Button>
+                            <Button>
+                            <Button variant="default" size="sm" onClick={function onClick} className="h-7 px-2 t..." ...>
+                              <Button data-slot="button" className={"group/bu..."} onClick={function onClick} ...>
+                                <button
+                                  type="button"
+                                  onClick={function onClick}
+                                  onMouseDown={function onMouseDown}
+                                  onKeyDown={function}
+                                  onKeyUp={function onKeyUp}
+                                  onPointerDown={function onPointerDown}
+                                  tabIndex={0}
+                                  disabled={false}
+                                  data-slot="button"
+                                  title="System"
+                                  ref={function}
++                                 className={"group/button inline-flex shrink-0 items-center justify-center border bo..."}
+-                                 className={"group/button inline-flex shrink-0 items-center justify-center border bo..."}
+                                >
+                    ...
+            ...
+          ...
+ @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_115brz8._.js:3272
